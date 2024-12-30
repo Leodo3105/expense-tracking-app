@@ -1,6 +1,5 @@
 import { DataTypes } from 'sequelize';
 import sequelize from '../config/db.js'; 
-import Category from './category.js'; 
 
 const User = sequelize.define(
   'User',
@@ -12,11 +11,16 @@ const User = sequelize.define(
     email: {
       type: DataTypes.STRING,
       allowNull: false,
-      unique: true, // Đảm bảo email là duy nhất
+      unique: true, 
     },
     password: {
       type: DataTypes.STRING,
       allowNull: false,
+    },
+    spendingLimit: {
+      type: DataTypes.DECIMAL(10, 2),
+      allowNull: true,
+      defaultValue: null,
     },
   },
   {
