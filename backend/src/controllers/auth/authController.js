@@ -63,8 +63,16 @@ export const register = async (req, res) => {
       password: hashedPassword,
     });
 
+    // Tạo token
+    const token = jwt.sign(
+        { id: newUser.id, email: newUser.email },
+        process.env.JWT_SECRET,
+        { expiresIn: '1h' }
+    );
+
     res.status(201).json({
       message: 'Đăng ký thành công!',
+      token: token, // Trả về token
       user: {
         id: newUser.id,
         name: newUser.name,
@@ -101,11 +109,7 @@ export const login = async (req, res) => {
       res.status(200).json({
         message: 'Đăng nhập thành công!',
         token,
-        user: {
-          id: user.id,
-          name: user.name,
-          email: user.email,
-        },
+        name: user.name,
       });
     } catch (error) {
       res.status(500).json({ error: error.message });

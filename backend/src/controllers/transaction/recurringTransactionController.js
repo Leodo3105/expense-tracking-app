@@ -41,7 +41,14 @@ export const addRecurringTransaction = async (req, res) => {
       message: `Giao dịch định kỳ của bạn (${amount} - ${note}) với tần suất ${frequency} đã được tạo thành công.`,
     });
 
-    res.status(201).json(recurringTransaction);
+    res.status(201).json({
+      success: true,
+      data: {
+        ...recurringTransaction.toJSON(),
+        amount: parseFloat(recurringTransaction.amount), // Chuyển amount sang số thực
+      },
+      message: "Recurring transaction created successfully",
+    });
   } catch (error) {
     console.error("Error while adding recurring transaction:", error);
     res.status(500).json({ error: error.message });
@@ -53,7 +60,7 @@ export const getRecurringTransactions = async (req, res) => {
       const recurringTransactions = await RecurringTransaction.findAll({
         where: { userId: req.user.id },
       });
-  
+
       res.status(200).json(recurringTransactions);
     } catch (error) {
       console.error('Error while fetching recurring transactions:', error);
