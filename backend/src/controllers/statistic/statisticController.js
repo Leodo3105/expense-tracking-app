@@ -30,12 +30,12 @@ export const getMonthlyOverview = async (req, res) => {
       group: ['Transaction.categoryId', 'category.id', 'category.type'],
     });
 
-    let totalIncome = 0;
-    let totalExpense = 0;
+    let totalIncome = 0.0;
+    let totalExpense = 0.0;
 
     transactions.forEach((transaction) => {
       const categoryType = transaction.category?.type;
-      const amount = parseFloat(transaction.dataValues.totalAmount || 0);
+      const amount = parseFloat(transaction.dataValues.totalAmount || 0.0);
       if (categoryType === 'income') {
         totalIncome += amount;
       } else if (categoryType === 'expense') {
@@ -60,7 +60,7 @@ export const getMonthlyOverview = async (req, res) => {
     
     recurringTransactions.forEach((recurring) => {
       const categoryType = recurring.category?.type;
-      const amount = parseFloat(recurring.amount || 0);
+      const amount = parseFloat(recurring.amount || 0.0);
       if (categoryType === 'income') {
         totalIncome += amount;
       } else if (categoryType === 'expense') {
@@ -81,70 +81,6 @@ export const getMonthlyOverview = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
-
-
-
-
-
-
-
-
-// export const getStatisticsByCategory = async (req, res) => {
-//     const { month, year } = req.query;
-  
-//     try {
-//       const startDate = new Date(year, month - 1, 1);
-//       const endDate = new Date(year, month, 0);
-  
-//       const stats = await Transaction.findAll({
-//         attributes: [
-//           'categoryId',
-//           [sequelize.fn('SUM', sequelize.col('amount')), 'totalAmount'],
-//         ],
-//         where: {
-//           userId: req.user.id,
-//           date: { [Op.between]: [startDate, endDate] },
-//         },
-//         group: ['categoryId'],
-//         include: [
-//           {
-//             model: Category,
-//             as: 'category',
-//             attributes: ['name', 'type'],
-//           },
-//         ],
-//       });
-  
-//       res.status(200).json(stats);
-//     } catch (error) {
-//       console.error('Error while fetching statistics by category:', error);
-//       res.status(500).json({ error: error.message });
-//     }
-// };
-
-// export const getStatisticsByTime = async (req, res) => {
-//     const { startDate, endDate } = req.query;
-  
-//     try {
-//       const stats = await Transaction.findAll({
-//         attributes: [
-//           [sequelize.fn('DATE', sequelize.col('date')), 'date'],
-//           [sequelize.fn('SUM', sequelize.col('amount')), 'totalAmount'],
-//         ],
-//         where: {
-//           userId: req.user.id,
-//           date: { [Op.between]: [startDate, endDate] },
-//         },
-//         group: ['date'],
-//         order: [[sequelize.literal('date'), 'ASC']],
-//       });
-  
-//       res.status(200).json(stats);
-//     } catch (error) {
-//       console.error('Error while fetching statistics by time:', error);
-//       res.status(500).json({ error: error.message });
-//     }
-// };
 
 export const getCategorySpendingRatio = async (req, res) => {
   const { month, year, type } = req.query;
